@@ -13,13 +13,12 @@ function Operator(inputs, declaration){
 
 				inputs.forEach(function(tuple){
 					var key = tuple[0],
-						action = tuple[1],
-						operator = declaration[key];
+						action = tuple[1];
 
 					action.subscribe(function(data){
 						// TODO: check operator result (maybe it's monad)
 						// state transition
-						assign(state, operator(state, data));
+						assign(state, declaration[key](state, data));
 						signal.publish(state);
 					});
 				});

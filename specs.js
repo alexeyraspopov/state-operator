@@ -1,11 +1,11 @@
-var Transition = require('./index'),
+var Operator = require('./index'),
 	newsletter = require('newsletter');
 
-describe('State Transition', function(){
+describe('State Operator', function(){
 	it('should update state on specific action', function(done){
 		var action = newsletter(), states;
 
-		states = Transition([
+		states = Operator([
 			['increment', action]
 		], {
 			initialState: function(){

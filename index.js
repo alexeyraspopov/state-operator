@@ -4,10 +4,16 @@ var newsletter = require('newsletter'),
 function Transition(inputs, declaration){
 	var signal = newsletter(), state;
 
-	Object.keys(inputs).forEach(function(key){
-		inputs[key].subscribe(function(data){
+	// TODO: move this part somewhere. it shouldn't work until someone will subscribe changes
+	inputs.forEach(function(tuple){
+		var key = tuple[0],
+			action = tuple[1],
+			operator = declaration[key];
+
+		action.subscribe(function(data){
 			// state transition
-			assign(state, declaration[key](state, data));
+			// TODO: check operator result (maybe it's monad)
+			assign(state, operator(state, data));
 			signal.publish(state);
 		});
 	});

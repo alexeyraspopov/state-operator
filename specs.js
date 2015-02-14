@@ -3,9 +3,11 @@ var Transition = require('./index'),
 
 describe('State Transition', function(){
 	it('should update state on specific action', function(done){
-		var action = newsletter();
+		var action = newsletter(), states;
 
-		var states = Transition({ increment: action }, {
+		states = Transition([
+			['increment', action]
+		], {
 			initialState: function(){
 				return { counter: 0 };
 			},

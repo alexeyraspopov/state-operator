@@ -6,21 +6,31 @@ describe('State Operator', function(){
 		var action = newsletter(), states;
 
 		states = Operator([
-			['increment', action]
+			['update', action]
 		], {
-			initialState: function(){
-				return { counter: 0 };
-			},
-			increment: function(state, data){
-				return { counter: state.counter + data };
+			update: function(state, data){
+				return { data: data };
 			}
 		});
 
 		states.subscribe(function(state){
-			expect(state.counter).toBe(13);
+			expect(state.data).toBe(13);
 			done();
 		});
 
 		action.publish(13);
+	});
+
+	it('should publish initial state when it\'s defined', function(done){
+		var states = Operator([], {
+			initialState: function(){
+				return { data: 13 };
+			}
+		});
+
+		states.subscribe(function(state){
+			expect(state.data).toBe(13);
+			done();
+		});
 	});
 });

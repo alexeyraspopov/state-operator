@@ -1,32 +1,48 @@
 var newsletter = require('newsletter'),
-	assign = require('object-assign');
+	assign = require('object-assign'),
+	onetime = require('onetime');
+
+var prototype = {
+	emit: function(state){
+		return state;
+	}
+};
 
 function Operator(inputs, declaration){
-	var signal = newsletter(), state;
+	var signal = newsletter(),
+		state = Object.create(null),
+		methods = assign(Object.create(prototype), declaration);
 
-	// TODO: describe prototype with default methods implementation (initialState, etc)
+	var initialSubscribe = onetime(function(){
+		inputs.forEach(function(tuple){
+			var key = tuple[0],
+				action = tuple[1];
+
+			action.subscribe(function(data){
+				// TODO: check operator result (maybe it's monad)
+				// state transition
+				assign(state, methods[key](state, data));
+				signal.publish(methods.emit(state));
+			});
+		});
+	});
+
+	function pushInitialState(callback){
+		if(typeof methods.initialState === 'function'){
+			// state transition
+			assign(state, methods.initialState());
+			callback(methods.emit(state));
+		}
+	}
+
 	return {
 		subscribe: function(callback){
-			if(typeof state === 'undefined'){
-				// state transition
-				state = declaration.initialState();
+			initialSubscribe();
+			pushInitialState(callback);
 
-				inputs.forEach(function(tuple){
-					var key = tuple[0],
-						action = tuple[1];
-
-					action.subscribe(function(data){
-						// TODO: check operator result (maybe it's monad)
-						// state transition
-						assign(state, declaration[key](state, data));
-						signal.publish(state);
-					});
-				});
-			}
-
-			signal.subscribe(callback);
+			return signal.subscribe(callback);
 		}
 	};
 }
 
-module.exports = Transition;
+module.exports = Operator;

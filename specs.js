@@ -33,4 +33,26 @@ describe('State Operator', function(){
 			done();
 		});
 	});
+
+	it('should emit actual state for new subscribers', function(done){
+		var action = newsletter(), states;
+
+		states = Operator([
+			['update', action]
+		], {
+			initialState: function(){
+				return { data: 12 };
+			},
+			update: function(state, data){
+				return { data: data };
+			}
+		});
+
+		action.publish(13);
+
+		states.subscribe(function(state){
+			expect(state.data).toBe(13);
+			done();
+		});
+	})
 });

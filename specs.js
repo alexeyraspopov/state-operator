@@ -48,6 +48,8 @@ describe('State Operator', function(){
 			}
 		});
 
+		states.subscribe(function(){/* initialize */});
+
 		action.publish(13);
 
 		states.subscribe(function(state){

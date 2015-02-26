@@ -3,6 +3,9 @@ var newsletter = require('newsletter'),
 	onetime = require('onetime');
 
 var prototype = {
+	initialState: function(){
+		return Object.create(null);
+	},
 	emit: function(state){
 		return state;
 	}
@@ -10,8 +13,8 @@ var prototype = {
 
 function Operator(inputs, declaration){
 	var signal = newsletter(),
-		state = Object.create(null),
-		methods = assign(Object.create(prototype), declaration);
+		methods = assign(Object.create(prototype), declaration),
+		state = methods.initialState();
 
 	var initialSubscribe = onetime(function(){
 		inputs.forEach(function(tuple){
@@ -19,26 +22,27 @@ function Operator(inputs, declaration){
 				action = tuple[1];
 
 			action.subscribe(function(data){
-				// TODO: check operator result (maybe it's monad)
-				// state transition
-				assign(state, methods[key](state, data));
-				signal.publish(methods.emit(state));
+				var newState = methods[key](state, data);
+
+				// TODO: check newState type (maybe it's monad)
+				assign(state, newState);
+				publish(signal.publish);
 			});
 		});
 	});
 
-	function pushInitialState(callback){
-		if(typeof methods.initialState === 'function'){
-			// state transition
-			assign(state, methods.initialState());
-			callback(methods.emit(state));
-		}
+	function publish(callback){
+		callback(methods.emit(state));
+	}
+
+	function initialPublish(callback){
+		return Object.keys(state).length && publish(callback);
 	}
 
 	return {
 		subscribe: function(callback){
 			initialSubscribe();
-			pushInitialState(callback);
+			initialPublish(callback);
 
 			return signal.subscribe(callback);
 		}

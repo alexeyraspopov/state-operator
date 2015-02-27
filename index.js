@@ -1,3 +1,6 @@
+// TODO: reduce closures
+// TODO: reduce push points
+// TODO: reduce state changes (inital state and state assign)
 var newsletter = require('newsletter'),
 	assign = require('object-assign'),
 	onetime = require('onetime');

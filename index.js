@@ -1,6 +1,7 @@
 // TODO: reduce closures
 // TODO: reduce push points
 // TODO: reduce state changes (inital state and state assign)
+// TODO: move to hot observable (?)
 var newsletter = require('newsletter'),
 	assign = require('object-assign'),
 	onetime = require('onetime');
@@ -17,6 +18,7 @@ var prototype = {
 function Operator(inputs, declaration){
 	var signal = newsletter(),
 		methods = assign(Object.create(prototype), declaration),
+		// FIXME: hot observable!
 		state = methods.initialState();
 
 	var initialSubscribe = onetime(function(){

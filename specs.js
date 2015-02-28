@@ -2,11 +2,11 @@ var Operator = require('./index'),
 	newsletter = require('newsletter');
 
 describe('State Operator', function(){
-	it('should update state on specific action', function(done){
-		var action = newsletter(), states;
+	it('should update state on specific signal', function(done){
+		var signal = newsletter(), states;
 
 		states = Operator([
-			['update', action]
+			['update', signal]
 		], {
 			update: function(state, data){
 				return { data: data };
@@ -18,7 +18,7 @@ describe('State Operator', function(){
 			done();
 		});
 
-		action.publish(13);
+		signal.publish(13);
 	});
 
 	it('should publish initial state when it\'s defined', function(done){
@@ -35,10 +35,10 @@ describe('State Operator', function(){
 	});
 
 	it('should emit actual state for new subscribers', function(done){
-		var action = newsletter(), states;
+		var signal = newsletter(), states;
 
 		states = Operator([
-			['update', action]
+			['update', signal]
 		], {
 			initialState: function(){
 				return { data: 12 };
@@ -50,7 +50,7 @@ describe('State Operator', function(){
 
 		states.subscribe(function(){/* initialize */});
 
-		action.publish(13);
+		signal.publish(13);
 
 		states.subscribe(function(state){
 			expect(state.data).toBe(13);

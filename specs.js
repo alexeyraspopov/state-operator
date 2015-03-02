@@ -5,9 +5,9 @@ describe('State Operator', function(){
 	it('should update state on specific signal', function(done){
 		var signal = newsletter(), states;
 
-		states = Operator([
-			['update', signal]
-		], {
+		states = Operator({
+			update: signal
+		}, {
 			update: function(state, data){
 				return { data: data };
 			}
@@ -22,7 +22,7 @@ describe('State Operator', function(){
 	});
 
 	it('should publish initial state when it\'s defined', function(done){
-		var states = Operator([], {
+		var states = Operator({}, {
 			initialState: function(){
 				return { data: 13 };
 			}
@@ -37,9 +37,9 @@ describe('State Operator', function(){
 	it('should emit actual state for new subscribers', function(done){
 		var signal = newsletter(), states;
 
-		states = Operator([
-			['update', signal]
-		], {
+		states = Operator({
+			update: signal
+		}, {
 			initialState: function(){
 				return { data: 12 };
 			},

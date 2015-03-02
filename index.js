@@ -1,6 +1,7 @@
 // TODO: reduce closures
 // TODO: reduce push points
 // TODO: reduce state changes (inital state and state assign)
+// TODO: custom signal factory
 var newsletter = require('newsletter'),
 	assign = require('object-assign');
 
@@ -19,9 +20,8 @@ function Operator(inputs, declaration){
 		methods = assign(Object.create(prototype), declaration),
 		state = methods.initialState();
 
-	inputs.forEach(function(tuple){
-		var key = tuple[0],
-			action = tuple[1];
+	Object.keys(inputs).forEach(function(key){
+		var action = inputs[key];
 
 		action.subscribe(function(data){
 			var newState = methods[key](state, data);
